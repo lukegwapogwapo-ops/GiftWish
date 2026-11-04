@@ -1,0 +1,179 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #fffaf3;
+  color: #26352b;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+/* Navigation */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 8%;
+  background: #174b35;
+  color: white;
+}
+
+.navbar h2 {
+  font-size: 25px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-links a:hover {
+  color: #f5d58b;
+}
+
+/* Homepage */
+
+.hero {
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 70px 10%;
+  background: linear-gradient(120deg, #174b35, #286b49);
+  color: white;
+}
+
+.hero-content {
+  max-width: 600px;
+}
+
+.tagline {
+  color: #f5d58b;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: 55px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+.hero h1 span {
+  color: #f5d58b;
+}
+
+.description {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #eeeeee;
+}
+
+.start-button {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  background: #d94b4b;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.start-button:hover {
+  background: #bd3838;
+}
+
+.gift-decoration {
+  font-size: 150px;
+}
+
+/* Features */
+
+.features {
+  padding: 65px 8%;
+  text-align: center;
+}
+
+.features h2 {
+  font-size: 30px;
+  margin-bottom: 40px;
+  color: #174b35;
+}
+
+.feature-list {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: white;
+  padding: 30px 22px;
+  width: 280px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px #00000012;
+}
+
+.feature-card span {
+  font-size: 40px;
+}
+
+.feature-card h3 {
+  margin: 15px 0 10px;
+  color: #174b35;
+}
+
+.feature-card p {
+  color: #666666;
+  line-height: 1.5;
+}
+
+/* Footer */
+
+footer {
+  background: #174b35;
+  color: white;
+  text-align: center;
+  padding: 25px;
+  line-height: 1.8;
+}
+
+/* Mobile layout */
+
+@media (max-width: 650px) {
+  .navbar {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    gap: 35px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .gift-decoration {
+    font-size: 100px;
+  }
+}
