@@ -307,22 +307,38 @@ app.get('/api/exchanges/:id/participants', async (req, res) => {
         }
 
         const exchangeId = req.params.id;
+        const userId = req.session.user.user_id;
 
-        // Check if the logged-in user is the organizer
+        // Check if the user is the organizer
         const [exchanges] = await db.execute(
-            'SELECT * FROM exchanges WHERE exchange_id = ? AND organizer_id = ?',
-            [exchangeId, req.session.user.user_id]
+            'SELECT * FROM exchanges WHERE exchange_id = ?',
+            [exchangeId]
         );
 
         if (exchanges.length === 0) {
+            return res.status(404).json({
+                message: 'Exchange not found.'
+            });
+        }
+
+        const isOrganizer =
+            Number(exchanges[0].organizer_id) === Number(userId);
+
+        // Check if the user is a participant
+        const [membership] = await db.execute(
+            'SELECT participant_id FROM participants WHERE exchange_id = ? AND user_id = ?',
+            [exchangeId, userId]
+        );
+
+        if (!isOrganizer && membership.length === 0) {
             return res.status(403).json({
-                message: 'Only the organizer can view participants.'
+                message: 'You are not part of this exchange.'
             });
         }
 
         // Get the participants
         const [participants] = await db.execute(
-            `SELECT users.name, users.email
+            `SELECT users.user_id, users.name, users.email
              FROM participants
              JOIN users ON participants.user_id = users.user_id
              WHERE participants.exchange_id = ?`,
