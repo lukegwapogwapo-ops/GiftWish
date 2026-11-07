@@ -876,6 +876,7 @@ app.get('/api/exchanges/:id/my-secret-santa', async (req, res) => {
     }
 });
 // Get exchanges belonging to the logged-in user
+
 app.get('/api/exchanges', async (req, res) => {
     try {
         if (!req.session.user) {
@@ -885,7 +886,7 @@ app.get('/api/exchanges', async (req, res) => {
         }
 
         const [exchanges] = await db.execute(
-            `SELECT DISTINCT
+            `SELECT
                 exchanges.exchange_id,
                 exchanges.event_name,
                 exchanges.invite_code,
@@ -893,7 +894,8 @@ app.get('/api/exchanges', async (req, res) => {
                 exchanges.gift_budget,
                 exchanges.status,
                 exchanges.organizer_id,
-                users.name AS organizer_name
+                users.name AS organizer_name,
+                COUNT(DISTINCT participants.user_id) AS participant_count
              FROM exchanges
              JOIN users
                 ON exchanges.organizer_id = users.user_id
@@ -901,6 +903,7 @@ app.get('/api/exchanges', async (req, res) => {
                 ON exchanges.exchange_id = participants.exchange_id
              WHERE exchanges.organizer_id = ?
                 OR participants.user_id = ?
+             GROUP BY exchanges.exchange_id
              ORDER BY exchanges.created_at DESC`,
             [
                 req.session.user.user_id,
@@ -916,7 +919,7 @@ app.get('/api/exchanges', async (req, res) => {
             message: 'Could not load your exchanges.'
         });
     }
-});
+}); 
 
 // Start server and check database
 async function startServer() {
@@ -926,7 +929,101 @@ async function startServer() {
         console.log('MySQL connected successfully!');
 
         connection.release();
+// Disband an exchange
+app.delete('/api/exchanges/:id', async (req, res) => {
+    let connection;
 
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({
+                message: 'Please log in first.'
+            });
+        }
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const exchangeId = req.params.id;
+        const userId = req.session.user.user_id;
+
+        // Find the exchange and lock it while checking
+        const [exchanges] = await connection.execute(
+            `SELECT organizer_id, status
+             FROM exchanges
+             WHERE exchange_id = ?
+             FOR UPDATE`,
+            [exchangeId]
+        );
+
+        if (exchanges.length === 0) {
+            await connection.rollback();
+            return res.status(404).json({
+                message: 'Exchange not found.'
+            });
+        }
+
+        const exchange = exchanges[0];
+
+        // Only the organizer can disband
+        if (Number(exchange.organizer_id) !== Number(userId)) {
+            await connection.rollback();
+            return res.status(403).json({
+                message: 'Only the organizer can disband this exchange.'
+            });
+        }
+
+        // Only open exchanges can be disbanded
+        if (exchange.status !== 'open') {
+            await connection.rollback();
+            return res.status(400).json({
+                message: 'This exchange can no longer be disbanded.'
+            });
+        }
+
+        // Check whether participants are still in the exchange
+        const [participants] = await connection.execute(
+            `SELECT COUNT(*) AS total
+             FROM participants
+             WHERE exchange_id = ?`,
+            [exchangeId]
+        );
+
+        if (participants[0].total > 0) {
+            await connection.rollback();
+            return res.status(400).json({
+                message: 'You can only disband an exchange when you are the only person left.'
+            });
+        }
+
+        // Delete the exchange
+        await connection.execute(
+            'DELETE FROM exchanges WHERE exchange_id = ?',
+            [exchangeId]
+        );
+
+        await connection.commit();
+
+        res.json({
+            message: 'Exchange disbanded successfully!'
+        });
+
+    } catch (error) {
+        if (connection) {
+            await connection.rollback();
+        }
+
+        console.error(error);
+
+        res.status(500).json({
+            message: 'Could not disband the exchange.'
+        });
+
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+});
         app.listen(PORT, () => {
             console.log(`GiftWish server running on port ${PORT}`);
         });

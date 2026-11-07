@@ -5,8 +5,8 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #fffaf3;
-  color: #26352b;
+  background-color: #f5f3e9;
+  color: #244735;
 }
 
 button, input, textarea {
@@ -15,6 +15,11 @@ button, input, textarea {
 
 .app {
   min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    #f5f3e9 0%,
+    #e8efe5 100%
+  );
 }
 
 .navbar {
@@ -140,9 +145,10 @@ button, input, textarea {
   justify-content: center;
   align-items: flex-start;
   padding: 40px 20px;
+  background-color: transparent;
 }
 .dashboard-card {
-  background: white;
+  background: rgba(232, 239, 229, 0.88);
   padding: 40px;
   border-radius: 15px;
   max-width: 650px;
@@ -152,28 +158,104 @@ button, input, textarea {
 }
 .dashboard-wide { max-width: 900px; }
 .dashboard-section {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #e8eee9;
+  margin-top: 35px;
+  padding: 25px;
+  background: #f1f5ed;
+  border: 1px solid #e1ebe3;
+  border-radius: 14px;
 }
+/* New exchange card styles */
 .exchange-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 15px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
 }
+
 .exchange-result {
-  background: #f7faf7;
-  border: 1px solid #e1ebe3;
-  border-radius: 10px;
-  padding: 18px;
+  background: #f1f5ed;
+  border: 2px solid #c8d9c5;
+  border-radius: 14px;
+  padding: 25px;
+  transition: 0.2s ease;
 }
-.exchange-result h3 { margin-top: 0; color: #174b35; }
-.invite-code { color: #b52f36; letter-spacing: 1px; }
+
+.exchange-result:hover {
+  border-color: #174b35;
+  box-shadow: 0 5px 15px rgba(23, 75, 53, 0.12);
+}
+
+.exchange-result h3 {
+  margin-top: 0;
+  color: #174b35;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.exchange-result p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.invite-code {
+  color: #b52f36;
+  letter-spacing: 1px;
+  font-size: 16px;
+}
+
+.exchange-result .secondary-button {
+  background: #174b35;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: 0.2s ease;
+}
+
+.exchange-result .secondary-button:hover {
+  background: #236747;
+  transform: translateY(-2px);
+}
+/* Keep this existing rule */
 .forms-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 25px;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto 35px;
+  padding-bottom: 25px;
+  border-bottom: 2px solid #e1ebe3;
+}
+.forms-grid .dashboard-section {
+  background: #e8efe5;  
+  border: 1px solid #e1ebe3;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 0;
+}
+
+.forms-grid h2 {
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+
+.forms-grid input {
+  padding: 9px;
+  font-size: 13px;
+}
+
+.forms-grid button {
+  padding: 10px;
+  font-size: 13px;
+} 
+.forms-grid .dashboard-section {
+  width: 85%;
+  justify-self: center;
 }
 .participant-list {
   list-style: none;
@@ -254,4 +336,171 @@ footer {
 /* Smooth button interaction */
 .danger-button:active {
   transform: scale(0.97);
+}
+.app {
+  min-height: 100vh;
+  background-image: url('/winter-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+.snowfall {
+  position: fixed;
+  top: -30px;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 10;
+  text-align: center;
+  color: #8ba99a;
+  font-size: 25px;
+  letter-spacing: 35px;
+  white-space: nowrap;
+  animation: snowfall 12s linear infinite;
+}
+
+.snowfall {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.snowfall span {
+  position: absolute;
+  top: -30px;
+  color: #8ba99a;
+  animation: snowfall linear infinite;
+}
+
+.snowfall span:nth-child(1) {
+  left: 5%;
+  animation-duration: 9s;
+  animation-delay: 0s;
+}
+
+.snowfall span:nth-child(2) {
+  left: 15%;
+  animation-duration: 13s;
+  animation-delay: 3s;
+}
+
+.snowfall span:nth-child(3) {
+  left: 28%;
+  animation-duration: 11s;
+  animation-delay: 5s;
+}
+
+.snowfall span:nth-child(4) {
+  left: 40%;
+  animation-duration: 15s;
+  animation-delay: 1s;
+}
+
+.snowfall span:nth-child(5) {
+  left: 52%;
+  animation-duration: 10s;
+  animation-delay: 6s;
+}
+
+.snowfall span:nth-child(6) {
+  left: 64%;
+  animation-duration: 14s;
+  animation-delay: 2s;
+}
+
+.snowfall span:nth-child(7) {
+  left: 75%;
+  animation-duration: 12s;
+  animation-delay: 4s;
+}
+
+.snowfall span:nth-child(8) {
+  left: 85%;
+  animation-duration: 16s;
+  animation-delay: 7s;
+}
+
+.snowfall span:nth-child(9) {
+  left: 95%;
+  animation-duration: 11s;
+  animation-delay: 2s;
+}
+
+.snowfall span:nth-child(10) {
+  left: 35%;
+  animation-duration: 13s;
+  animation-delay: 8s;
+}
+.snowfall span:nth-child(11) {
+  left: 10%;
+  animation-duration: 12s;
+  animation-delay: 2s;
+}
+
+.snowfall span:nth-child(12) {
+  left: 20%;
+  animation-duration: 15s;
+  animation-delay: 5s;
+}
+
+.snowfall span:nth-child(13) {
+  left: 32%;
+  animation-duration: 10s;
+  animation-delay: 1s;
+}
+
+.snowfall span:nth-child(14) {
+  left: 45%;
+  animation-duration: 14s;
+  animation-delay: 4s;
+}
+
+.snowfall span:nth-child(15) {
+  left: 57%;
+  animation-duration: 11s;
+  animation-delay: 3s;
+}
+
+.snowfall span:nth-child(16) {
+  left: 68%;
+  animation-duration: 16s;
+  animation-delay: 6s;
+}
+
+.snowfall span:nth-child(17) {
+  left: 78%;
+  animation-duration: 13s;
+  animation-delay: 2s;
+}
+
+.snowfall span:nth-child(18) {
+  left: 88%;
+  animation-duration: 9s;
+  animation-delay: 5s;
+}
+
+.snowfall span:nth-child(19) {
+  left: 25%;
+  animation-duration: 17s;
+  animation-delay: 7s;
+}
+
+.snowfall span:nth-child(20) {
+  left: 92%;
+  animation-duration: 12s;
+  animation-delay: 4s;
+}
+@keyframes snowfall {
+  0% {
+    transform: translateY(-30px);
+  }
+
+  100% {
+    transform: translateY(110vh);
+  }
 }

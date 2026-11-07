@@ -135,6 +135,27 @@ function App() {
     }
   }
 
+async function handleDisbandExchange(item) {
+  const confirmed = window.confirm(
+    `Are you sure you want to disband "${item.event_name}"? This cannot be undone.`
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    const data = await apiRequest(`/exchanges/${item.exchange_id}`, {
+      method: 'DELETE'
+    });
+
+    setMessage(data.message);
+    await loadExchanges();
+  } catch (error) {
+    setMessage(error.message);
+  }
+}
+
   async function openExchange(item) {
     setSelectedExchange(item);
     setPage('exchange');
@@ -336,6 +357,28 @@ async function leaveExchange() {
 
   return (
     <div className="app">
+      <div className="snowfall" aria-hidden="true">
+  <span>❄</span>
+  <span>❅</span>
+  <span>❄</span>
+  <span>❅</span>
+  <span>❄</span>
+  <span>❅</span>
+  <span>❄</span>
+  <span>❅</span>
+  <span>❄</span>
+  <span>❅</span>
+  <span>❄</span>
+<span>❅</span>
+<span>❄</span>
+<span>❅</span>
+<span>❄</span>
+<span>❅</span>
+<span>❄</span>
+<span>❅</span>
+<span>❄</span>
+<span>❅</span>
+</div>
       <nav className="navbar">
         <h2>🎁 GiftWish</h2>
         <div className="nav-links">
@@ -395,54 +438,114 @@ async function leaveExchange() {
         </main>
       )}
 
-      {page === 'dashboard' && user && (
-        <main className="dashboard">
-          <div className="dashboard-card dashboard-wide">
-            <h1>Welcome, {user.name}! 🎄</h1>
-            <p>Your Christmas gift exchange journey starts here!</p>
+     
 
-            <section className="dashboard-section">
-              <h2>My Gift Exchanges 🎁</h2>
-              {exchanges.length === 0 ? <p>You haven't joined any exchanges yet.</p> : (
-                <div className="exchange-list">
-                  {exchanges.map(item => (
-                    <div className="exchange-result" key={item.exchange_id}>
-                      <h3>{item.event_name}</h3>
-                      <p>Organizer: {item.organizer_name}</p>
-                      <p>Status: <strong>{item.status}</strong></p>
-                      {item.event_date && <p>Date: {new Date(item.event_date).toLocaleDateString()}</p>}
-                      {item.organizer_id === user.user_id && (
-                        <p>Invitation code: <strong className="invite-code">{item.invite_code}</strong></p>
-                      )}
-                      <button className="secondary-button" onClick={() => openExchange(item)}>View Exchange</button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
+{page === 'dashboard' && user && (
+  <main className="dashboard">
+    <div className="dashboard-card dashboard-wide">
+      <h1>Welcome, {user.name}! 🎄</h1>
+      <p>Your Christmas gift exchange journey starts here!</p>
 
-            <div className="forms-grid">
-              <section className="dashboard-section">
-                <h2>Join an Exchange 🎅</h2>
-                <form onSubmit={handleJoinExchange} className="stack-form">
-                  <input type="text" placeholder="Enter invitation code" value={inviteCode} onChange={e => setInviteCode(e.target.value.toUpperCase())} required />
-                  <button type="submit" className="start-button">Join Exchange 🎁</button>
-                </form>
-              </section>
-              <section className="dashboard-section">
-                <h2>Create a Gift Exchange 🎁</h2>
-                <form onSubmit={handleCreateExchange} className="stack-form">
-                  <input type="text" placeholder="Event name" value={eventName} onChange={e => setEventName(e.target.value)} required />
-                  <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} />
-                  <input type="number" placeholder="Gift budget (PHP)" min="0" step="0.01" value={giftBudget} onChange={e => setGiftBudget(e.target.value)} />
-                  <button type="submit" className="start-button">Create Exchange 🎄</button>
-                </form>
-              </section>
-            </div>
-            {message && <p className="message">{message}</p>}
+      {/* My Gift Exchanges */}
+      <section className="dashboard-section">
+        <h2>My Gift Exchanges 🎁</h2>
+
+        {exchanges.length === 0 ? (
+          <p>You haven't joined any exchanges yet.</p>
+        ) : (
+          <div className="exchange-list">
+            {exchanges.map(item => (
+              <div className="exchange-result" key={item.exchange_id}>
+                <h3>{item.event_name}</h3>
+                <p>Organizer: {item.organizer_name}</p>
+                <p>Status: <strong>{item.status}</strong></p>
+
+                {item.event_date && (
+                  <p>Date: {new Date(item.event_date).toLocaleDateString()}</p>
+                )}
+
+                {item.organizer_id === user.user_id && (
+                  <p>
+                    Invitation code:{' '}
+                    <strong className="invite-code">{item.invite_code}</strong>
+                  </p>
+                )}
+
+                <button
+  className="secondary-button"
+  onClick={() => openExchange(item)}
+>
+  View Exchange
+</button>
+
+{Number(item.organizer_id) === Number(user.user_id) &&
+ Number(item.participant_count) === 0 &&
+ item.status === 'open' && (
+  <button
+    className="secondary-button"
+    onClick={() => handleDisbandExchange(item)}
+  >
+    Disband Exchange
+  </button>
+)}
+              </div>
+            ))}
           </div>
-        </main>
-      )}
+        )}
+      </section>
+
+      {/* Create and Join Exchange */}
+      <div className="forms-grid">
+        <section className="dashboard-section">
+          <h2>Create a Gift Exchange 🎁</h2>
+          <form onSubmit={handleCreateExchange} className="stack-form">
+            <input
+              type="text"
+              placeholder="Event name"
+              value={eventName}
+              onChange={e => setEventName(e.target.value)}
+              required
+            />
+            <input
+              type="date"
+              value={eventDate}
+              onChange={e => setEventDate(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Gift budget (PHP)"
+              min="0"
+              step="0.01"
+              value={giftBudget}
+              onChange={e => setGiftBudget(e.target.value)}
+            />
+            <button type="submit" className="start-button">
+              Create Exchange 🎄
+            </button>
+          </form>
+        </section>
+
+        <section className="dashboard-section">
+          <h2>Join an Exchange 🎅</h2>
+          <form onSubmit={handleJoinExchange} className="stack-form">
+            <input
+              type="text"
+              placeholder="Enter invitation code"
+              value={inviteCode}
+              onChange={e => setInviteCode(e.target.value.toUpperCase())}
+              required
+            />
+            <button type="submit" className="start-button">
+              Join Exchange 🎁
+            </button>
+          </form>
+        </section>
+      </div>
+
+      {message && <p className="message">{message}</p>}
+    </div>
+  </main>
+)}
 
       {page === 'exchange' && selectedExchange && user && (
         <main className="dashboard">
